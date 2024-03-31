@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  h1 Create Playlist
+  input(type="text", id="artistId", placeholder="Enter artist id", onchange="updateLink(this.value)")
+  a(href="#" id="playlistLink", target="_blank") Create Playlist
+
+  script.
+    function updateLink(artistId) {
+      var link = document.getElementById("playlistLink");
+      link.href = "http://localhost:3000/create-playlist/" + encodeURIComponent(artistId);
+    }
