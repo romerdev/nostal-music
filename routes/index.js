@@ -95,54 +95,8 @@ router.get("/create-playlist/:artistId", async (req, res) => {
       }
     }
 
-    if (uniqueTracks.length < 50) {
-      res.status(200).send("Playlist created successfully.");
-      return;
-    }
-
-    const sortedTracks = tracks.sort((a, b) => b.popularity - a.popularity);
-
-    const top25PlaylistTitle = `The Best of ${artistName}`;
-    const top25Playlist = await spotifyApi.createPlaylist(top25PlaylistTitle, {
-      description:
-        "The top 25 most popular songs, based on Spotify's algorithm.",
-    });
-    const top25PlaylistId = top25Playlist.body.id;
-
-    const addedTracks = new Set();
-
-    let trackCount = 0;
-    for (let i = 0; i < sortedTracks.length; i++) {
-      const track = sortedTracks[i];
-
-      if (!addedTracks.has(track.isrc)) {
-        const uniqueTrack = uniqueTracks.find(
-          (uniqueTrack) => uniqueTrack.isrc === track.isrc
-        );
-
-        if (uniqueTrack) {
-          await spotifyApi.addTracksToPlaylist(top25PlaylistId, [
-            uniqueTrack.uri,
-          ]);
-        } else {
-          await spotifyApi.addTracksToPlaylist(top25PlaylistId, [track.uri]);
-        }
-        addedTracks.add(track.isrc);
-        trackCount++;
-      }
-
-      if (trackCount === 45) {
-        break;
-      }
-    }
-
-    try {
-      await spotifyApi.followArtists([artistId]);
-    } catch (err) {
-      console.error(`Error following artist: ${err.message}`);
-    }
-
     res.status(200).send("Playlist created successfully.");
+    return;
   } catch (err) {
     console.error("Error:", err);
     res.status(400).send(err);
