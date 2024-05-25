@@ -95,6 +95,12 @@ router.get("/create-playlist/:artistId", async (req, res) => {
       }
     }
 
+    try {
+      await spotifyApi.followArtists([artistId]);
+    } catch (err) {
+      console.error(`Error following artist: ${err.message}`);
+    }
+
     res.status(200).send("Playlist created successfully.");
     return;
   } catch (err) {
